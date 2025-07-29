@@ -1,9 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from agents import transform_query, generate_response
 import os
-import traceback
 
 load_dotenv()
 app = FastAPI()
@@ -13,22 +12,22 @@ class AskRequest(BaseModel):
 
 @app.post("/ask")
 async def ask(request: AskRequest):
-    query = request.query
-    try:
-        print(f"Received query: {query}")
-        enhanced = transform_query(query)
-        print(f"Enhanced query: {enhanced}")
-        final = generate_response(query, enhanced)
-        print(f"Final response: {final}")
+    query = request.query.strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query cannot be empty.")
 
-        return {
-            "original_query": query,
-            "enhanced_query": enhanced,
-            "final_response": final
-        }
+    try:
+        enhanced = transform_query(query)
+        final = generate_response(query, enhanced)
     except Exception as e:
-        print("❌ ERROR in /ask endpoint:")
-        traceback.print_exc()
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+    return {
+        "original_query": query,
+        "enhanced_query": enhanced,
+        "final_response": final
+    }
+
+
 
 
