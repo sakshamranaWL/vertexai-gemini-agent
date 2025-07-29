@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 project_id = os.getenv("PROJECT_ID")
-region = os.getenv("REGION", "global")
+region = os.getenv("REGION")
 
 # Load models
-llm_1 = ChatVertexAI(model="gemini-1.5-flash", project=os.getenv("PROJECT_ID"), location=os.getenv("REGION","global"))
-llm_2 = ChatVertexAI(model="gemini-1.5-flash", project=os.getenv("PROJECT_ID"), location=os.getenv("REGION","global"))
+llm_1 = ChatVertexAI(model="gemini-1.5-flash", project=os.getenv("PROJECT_ID"), location=os.getenv("REGION"))
+llm_2 = ChatVertexAI(model="gemini-1.5-flash", project=os.getenv("PROJECT_ID"), location=os.getenv("REGION"))
 
 # Prompt 1: Transform
 prompt_1 = PromptTemplate.from_template(
